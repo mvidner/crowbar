@@ -601,15 +601,15 @@ setup() {
         die "Crowbar repo must be clean before trying to set things up!"
     # Make sure we have Github login credentials as the very first thing.
     [[ $DEV_GITHUB_ID && $DEV_GITHUB_PASSWD ]] || {
-        read -p "Enter your Github username: " DEV_GITHUB_ID
+        read -r -p "Enter your Github username: " DEV_GITHUB_ID
         curl_and_res -f \
             "https://api.github.com/users/$DEV_GITHUB_ID" &>/dev/null || \
             die "Could not verify that $DEV_GITHUB_ID is a valid Github user.."
-        while [[ $p != $DEV_GITHUB_PASSWD || ! $p ]]; do
-            [[ $p ]] && echo "Passwords did not match, try again."
-            read -s -p "Enter your Github password: " DEV_GITHUB_PASSWD
+        while [[ "$p" != "$DEV_GITHUB_PASSWD" || -z "$p" ]]; do
+            [[ -n "$p" ]] && echo "Passwords did not match, try again."
+            read -r -s -p "Enter your Github password: " DEV_GITHUB_PASSWD
             echo
-            read -s -p "Enter your Github password again: " p
+            read -r -s -p "Enter your Github password again: " p
             echo
         done
         curl_and_res -f -u "$DEV_GITHUB_ID:$DEV_GITHUB_PASSWD" \
